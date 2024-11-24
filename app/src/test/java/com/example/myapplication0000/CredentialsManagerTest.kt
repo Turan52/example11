@@ -1,57 +1,58 @@
-package com.example.myapplication0000
-
-import CredentialsManager
 import org.junit.Test
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 
 class CredentialsManagerTest {
 
     @Test
-    fun whenEmailEmpty_shouldReturnTrue() {
-        val checmanager = CredentialsManager()
-        assertEquals(true, checmanager.isEmailEmpty(""))
+    fun givenAlreadyRegisteredEmail_shouldThrowError() {
+        val manager = CredentialsManager()
+        manager.register("abcdef@example.com", "password123ABC.")
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            manager.register("abcdef@example.com", "password123ABC.")
+        }
+        assertEquals("Email is already registered.", exception.message)
+    }
+    @Test
+    fun givenNewEmail_shouldRegisterSuccessfully() {
+        val manager = CredentialsManager()
+        manager.register("abcdef@example.com", "password123ABC.")
     }
 
     @Test
-    fun whenEmailNotEmpty_shouldReturnFalse() {
-        val checmanager = CredentialsManager()
-        assertEquals(false, checmanager.isEmailEmpty("test@example.com"))
+    fun givenInvalidEmailForRegistration_shouldThrowError() {
+        val manager = CredentialsManager()
+
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            manager.register("invalid-email", "password123")
+        }
+        assertEquals("Invalid email format.", exception.message)
     }
 
     @Test
-    fun whenEmailInvalid_shouldReturnFalse() {
-        val checmanager = CredentialsManager()
-        assertEquals(false, checmanager.isEmailValid("invalid-email"))
-        assertEquals(false, checmanager.isEmailValid("invalid-email"))
-    }
+    fun givenEmptyPasswordForRegistration_shouldThrowError() {
+        val manager = CredentialsManager()
 
-    @Test
-    fun whenEmailValid_shouldReturnTrue() {
-        val checmanager = CredentialsManager()
-        assertEquals(true, checmanager.isEmailValid("valid123@example.com"))
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            manager.register("user@example.com", "")
+        }
+        assertEquals("Password cannot be empty.", exception.message)
     }
+}
 
-    @Test
-    fun whenPasswordEmpty_shouldReturnTrue() {
-        val checmanager = CredentialsManager()
-        assertEquals(true, checmanager.isPasswordEmpty(""))
+@Test
+fun givenShortPassword_shouldThrowError() {
+    val manager = CredentialsManager()
+    val exception = assertThrows(IllegalArgumentException::class.java) {
+        manager.validatePassword("12345")
     }
+    assertEquals("Password must be at least 8 characters long.", exception.message)
+}
 
-    @Test
-    fun whenPasswordNotEmpty_shouldReturnFalse() {
-        val checmanager = CredentialsManager()
-        assertEquals(false, checmanager.isPasswordEmpty("securePasswordABC123"))
-    }
-
-    @Test
-    fun whenPasswordIsNotEmpty_shouldReturnTrueForFilled() {
-        val checmanager = CredentialsManager()
-        assertEquals(true, checmanager.isPasswordFilled("myPasswordABC123"))
-    }
-
-    @Test
-    fun whenPasswordIsEmpty_shouldReturnFalseForFilled() {
-        val checmanager = CredentialsManager()
-        assertEquals(false, checmanager.isPasswordFilled(""))
-    }
+@Test
+fun givenValidPassword_shouldNotThrowError() {
+    val manager = CredentialsManager()
+    manager.validatePassword("securePassword123ABC")
+}
 }

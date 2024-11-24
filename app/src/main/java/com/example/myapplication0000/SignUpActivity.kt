@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
+
 class SignUpActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,19 +30,29 @@ class SignUpActivity : AppCompatActivity() {
                 name.isEmpty() -> {
                     Toast.makeText(this, "Full Name of the Candidate is required", Toast.LENGTH_SHORT).show()
                 }
-                credentialsManager.isEmailEmpty(email) -> {
+                email.isEmpty() -> {
                     Toast.makeText(this, "Email is required!", Toast.LENGTH_SHORT).show()
                 }
-                !credentialsManager.isEmailValid(email) -> {
-                    Toast.makeText(this, "Invalid email format!", Toast.LENGTH_SHORT).show()
-                }
-                credentialsManager.isPasswordEmpty(password) -> {
+                password.isEmpty() -> {
                     Toast.makeText(this, "Password is required!", Toast.LENGTH_SHORT).show()
                 }
-                else -> {
+                else -> try {
+                    credentialsManager.validateEmail(email)
+                    credentialsManager.validatePassword(password)
+                    credentialsManager.register(email, password)
+
+
                     Toast.makeText(this, "Sign-up Successful!", Toast.LENGTH_LONG).show()
+
+
+                    nameField.text.clear()
+                    emailField.text.clear()
+                    passwordField.text.clear()
+                } catch (e: IllegalArgumentException) {
+                    Toast.makeText(this, e.message, Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 }
+

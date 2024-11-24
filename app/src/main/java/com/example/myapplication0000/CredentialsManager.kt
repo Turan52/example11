@@ -1,6 +1,6 @@
 class CredentialsManager {
 
-    private val useremail =
+    private val emailVal =
         ("[a-zA-Z0-9\\+\\%\\-\\+]{1,256}" +
                 "\\@" +
                 "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
@@ -9,19 +9,23 @@ class CredentialsManager {
                 "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
                 ")+").toRegex()
 
-    fun isEmailValid(email: String): Boolean {
-        return email.matches(useremail)
+    private val registeredAccounts = mutableMapOf<String, String>()
+
+    fun validateEmail(email: String) {
+        require(email.isNotEmpty()) { "Email cannot be empty." }
+        require(email.matches(emailVal)) { "Invalid email format." }
     }
 
-    fun isEmailEmpty(email: String): Boolean {
-        return email.isEmpty()
+    fun validatePassword(password: String) {
+        require(password.isNotEmpty()) { "Password cannot be empty." }
+        require(password.length >= 6) { "Password must be at least 6 characters long." }
     }
 
-    fun isPasswordEmpty(password: String): Boolean {
-        return password.isEmpty()
-    }
-
-    fun isPasswordFilled(password: String): Boolean {
-        return password.isNotEmpty()
+    fun register(email: String, password: String) {
+        val normalizedEmail = email.lowercase()
+        require(!registeredAccounts.containsKey(normalizedEmail)) {
+            "This email is already registered."
+        }
+        registeredAccounts[normalizedEmail] = password
     }
 }
