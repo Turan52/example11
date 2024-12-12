@@ -14,6 +14,7 @@ class CredentialsManagerTest {
         }
         assertEquals("Email is already registered.", exception.message)
     }
+
     @Test
     fun givenNewEmail_shouldRegisterSuccessfully() {
         val manager = CredentialsManager()
@@ -39,20 +40,19 @@ class CredentialsManagerTest {
         }
         assertEquals("Password cannot be empty.", exception.message)
     }
-}
 
-@Test
-fun givenShortPassword_shouldThrowError() {
-    val manager = CredentialsManager()
-    val exception = assertThrows(IllegalArgumentException::class.java) {
-        manager.validatePassword("12345")
+    @Test
+    fun givenShortPassword_shouldThrowError() {
+        val manager = CredentialsManager()
+        val exception = assertThrows(IllegalArgumentException::class.java) {
+            manager.validatePassword("12345")
+        }
+        assertEquals("Password must be at least 8 characters long.", exception.message)
     }
-    assertEquals("Password must be at least 8 characters long.", exception.message)
-}
 
-@Test
-fun givenValidPassword_shouldNotThrowError() {
-    val manager = CredentialsManager()
-    manager.validatePassword("securePassword123ABC")
-}
+    @Test
+    fun givenValidPassword_shouldNotThrowError() {
+        val manager = CredentialsManager()
+        manager.validatePassword("securePassword123ABC")
+    }
 }
